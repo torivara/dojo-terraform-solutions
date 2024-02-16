@@ -56,6 +56,7 @@ You can find solutions [here](https://www.google.com).
 4. Plan and apply your configuration to create the resource group in Azure.
 
 **Hint**: Refer to the AzureRM provider documentation for the syntax to create a resource group.
+**Hint**: Terraform validation for variables documentation [here](https://developer.hashicorp.com/terraform/language/values/variables#custom-validation-rules)
 
 ### Exercise 4: Adding a Virtual Network
 
