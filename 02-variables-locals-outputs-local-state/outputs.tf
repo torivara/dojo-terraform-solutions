@@ -3,5 +3,5 @@ output "resource_group_name" {
 }
 
 output "location" {
-  value = location
+  value = var.location
 }
