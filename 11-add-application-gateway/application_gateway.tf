@@ -2,7 +2,8 @@ resource "azurerm_public_ip" "agw_pip" {
   name                = "${var.prefix}-${var.appgateway_name}-pip"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
+  sku                 = "Standard"
 }
 
 # since these variables are re-used - a locals block makes this more maintainable
