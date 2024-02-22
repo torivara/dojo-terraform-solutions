@@ -4,7 +4,8 @@ These are the exercises we will try to get through during our dojo coding sessio
 
 ## General guidelines
 
-- Avoid using AI to generate your code. This limits how much of it you understand when finished.
+- Look up the resource type needed in [AzureRM Provider Docs](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) and work from there.
+- If you have Hashicorp Terraform extension in VSCode you can enable [code completion](https://marketplace.visualstudio.com/items?itemName=HashiCorp.terraform#code-completion).
 - There are pre-created users for you to authenticate to the lab.
 - The lab allows only creation of the resources mentioned in this exercise.
 - Please avoid creation of extremes (such as many VMs or databases). The lab is not free.
@@ -12,10 +13,12 @@ These are the exercises we will try to get through during our dojo coding sessio
 - All resources created in the lab environment will be forcefully deleted end of working day 2024-02-24.
 - **Absolutely no bitcoin mining or any other shenanigans! Microsoft detects this and blocks the Azure tenant without notice.**
 - Use git for version control if you want, this is not covered in our workshop.
+- In all tasks you can, and should, use some form of formatting tool. This can either be [autoformat](https://marketplace.visualstudio.com/items?itemName=HashiCorp.terraform#formatting) or manually with `terraform fmt`.
+- In all tasks you should try `terraform validate` before plan and apply to see that you have the syntax correct.
 
-You can find solutions [here](https://www.google.com).
+You can find solutions [here](https://github.com/torivara/dojo-terraform-solutions) some time during the workshop (not immediately).
 
-### Exercise 1: Setting Up Your Environment (local state)
+### Exercise 0: Setting Up Your Environment (local state)
 
 **Objective**: Install prerequisites and configure it to use the AzureRM provider.
 
@@ -23,12 +26,23 @@ You can find solutions [here](https://www.google.com).
 1. Install Terraform on your machine (required for running Terraform actions).
 2. Install Azure CLI on your machine (required for authenticating Terraform to Azure).
 3. Install Hashicorp Terraform extension in VSCode.
-4. Configure your Terraform and provider version constraints with a `version.tf` file.
-5. Configure Terraform to use the [AzureRM provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) by creating a `provider.tf` file.
+4. Create a folder for your Terraform project (c:\terraform\dojo-coding) or something similar. Avoid using spaces in the name as this can cause issues.
+5. Configure your Terraform and provider terraform and provider versions with a `version.tf` file.
+6. Configure Terraform to use the [AzureRM provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) by creating a `provider.tf` file.
 7. Initialize your Terraform configuration.
+8. Run terraform plan and apply to see if there are changes needed and the config is valid.
 
-- **Hint**: Use the Terraform documentation to find the syntax for declaring providers and initializing configurations.
+- **Hint**: Use the Terraform documentation to find the syntax for declaring providers and [version constraints](https://developer.hashicorp.com/terraform/language/expressions/version-constraints).
+- **Hint**: Use the [documentation](https://developer.hashicorp.com/terraform/language/settings#specifying-provider-requirements) to find how this is configured.
 - **Hint**: Use winget (or another package manager) to install Terraform and Azure CLI. This simplifies future software updates.
+
+### Exercise 1: Basic generic tasks
+
+Do these exercises if you are not familiar with Terraform to get a feel for the syntax.
+
+**Objective**: Getting to know functions, expressions, variable types.
+
+There are ten tasks defined [here](https://github.com/torivara/dojo-terraform/blob/main/01-basic-generic-tasks/exercises.md). Do them at your own pace, and if you feel like getting to know the HCL syntax before starting some resource creation in Azure.
 
 ### Exercise 2: Defining Variables, Locals, and Outputs (local state)
 
@@ -46,6 +60,20 @@ You can find solutions [here](https://www.google.com).
 - **Hint**: Explore Terraform documentation on variables, locals, and outputs.
 
 ### Exercise 3: Creating a Resource Group and a virtual network (local state)
+
+You need to log in for this exercise. Use the provided service principal credentials with the following cli command:
+
+- *Replace myServicePrincipalId with appId*
+- *Replace myServicePrincipalPassword with password*
+
+```powershell
+az login --service-principal \
+         --username myServicePrincipalId \
+         --password myServicePrincipalPassword \
+         --tenant myOrganizationTenantID
+```
+
+You also have access to a portal user if you want to view changes there. This user only has reader access on the subscription and in Entra ID. Log in [here](https://portal.azure.com) with credentials provided. Remember to use private or incognito browser window.
 
 **Objective**: Use Terraform to create an [Azure Resource Group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group), and create a [Virtual Network](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) within the Resource Group.
 
@@ -134,11 +162,10 @@ You can find solutions [here](https://www.google.com).
 **Tasks**:
 1. Define a NSG resource with security rules in Terraform.
 2. The NSG should allow HTTPS, SSH and RDP from your client ip to the entire subnet range.
-3. Define the [NSG rules](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule) with a map of objects.
+3. Define the NSG rules with a map of objects.
 4. Associate the NSG with one or more subnets from Exercise 5.
 5. Apply your configuration.
 
-- **Hint**: Security rules should not be defined within the NSG resource block. Use the NSG rule resource with for_each.
 - **Hint**: Use [dynamic blocks](https://developer.hashicorp.com/terraform/language/expressions/dynamic-blocks) for your NSG rules.
 - **Hint**: Get your public ip `curl api.ipify.org` or `(invoke-webrequest api.ipify.org).content`
 
