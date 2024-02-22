@@ -5,15 +5,8 @@ resource "azurerm_virtual_network" "vnet" {
   resource_group_name = azurerm_resource_group.rg.name
 }
 
-resource "azurerm_subnet" "subnet1" {
-  address_prefixes     = var.default_subnet_prefix
-  name                 = var.default_subnet_name
-  resource_group_name  = azurerm_resource_group.rg.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-}
-
-resource "azurerm_subnet" "additional_subnets" {
-  for_each             = var.additional_subnets
+resource "azurerm_subnet" "subnets" {
+  for_each             = var.subnets
   address_prefixes     = each.value.address_prefixes
   name                 = each.value.name
   resource_group_name  = each.value.resource_group_name

@@ -9,7 +9,7 @@ module "nsg" {
 }
 
 resource "azurerm_subnet_network_security_group_association" "nsg_association" {
-  for_each                  = var.additional_subnets
+  for_each                  = var.subnets
   network_security_group_id = module.nsg.nsg_id
   subnet_id                 = "${azurerm_virtual_network.vnet.id}/subnets/${each.value.name}"
 }

@@ -12,7 +12,7 @@ resource "azurerm_key_vault" "keyvault" {
   network_acls {
     bypass                     = "AzureServices"
     default_action             = "Allow"
-    virtual_network_subnet_ids = [azurerm_subnet.subnet1.id]
+    virtual_network_subnet_ids = []
   }
 
   depends_on = [azurerm_role_assignment.kv_admin]

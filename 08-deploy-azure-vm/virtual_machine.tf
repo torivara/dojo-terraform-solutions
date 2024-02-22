@@ -5,19 +5,18 @@ resource "azurerm_network_interface" "vm1_nic" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.subnet1.id
+    subnet_id                     = azurerm_subnet.subnets["ServerSubnet"].id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.vm1_pip.id
   }
 }
 
 resource "azurerm_public_ip" "vm1_pip" {
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
   sku                 = "Standard"
   location            = azurerm_resource_group.rg.location
   name                = "${local.vm_name}-pip"
   resource_group_name = azurerm_resource_group.rg.name
-
 }
 
 resource "azurerm_windows_virtual_machine" "vm1" {

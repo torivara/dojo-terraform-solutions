@@ -19,5 +19,5 @@ output "vnet_rg_name" {
 }
 
 output "subnets" {
-  value = azurerm_virtual_network.vnet.subnet[*]
+  value = { for value in azurerm_virtual_network.vnet.subnet[*] : value.name => value }
 }

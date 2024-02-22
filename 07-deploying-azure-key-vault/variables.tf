@@ -32,30 +32,18 @@ variable "vnet_address_space" {
   default     = ["10.0.0.0/16"]
 }
 
-variable "default_subnet_prefix" {
-  type        = list(string)
-  description = "Address prefix for your default subnet. Defaults to 10.0.0.0/24."
-  default     = ["10.0.0.0/24"]
-}
-
-variable "default_subnet_name" {
-  type        = string
-  description = "Default subnet name."
-  default     = "default"
-}
-
-variable "additional_subnets" {
+variable "subnets" {
   type = map(object({ address_prefixes = list(string), name = string, resource_group_name = string, virtual_network_name = string }))
   default = {
-    ApplicationGatewaySubnet = {
-      address_prefixes     = ["10.0.1.0/24"]
-      name                 = "ApplicationGatewaySubnet"
+    default = {
+      address_prefixes     = ["10.0.0.0/24"]
+      name                 = "default"
       resource_group_name  = "dojolab-defaultname"
       virtual_network_name = "dojolab-defaultname-vnet"
     },
-    KeyVaultSubnet = {
-      address_prefixes     = ["10.0.2.0/24"]
-      name                 = "KeyVaultSubnet"
+    ApplicationGatewaySubnet = {
+      address_prefixes     = ["10.0.1.0/24"]
+      name                 = "ApplicationGatewaySubnet"
       resource_group_name  = "dojolab-defaultname"
       virtual_network_name = "dojolab-defaultname-vnet"
     }

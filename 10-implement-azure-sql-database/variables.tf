@@ -32,21 +32,15 @@ variable "vnet_address_space" {
   default     = ["10.0.0.0/16"]
 }
 
-variable "default_subnet_prefix" {
-  type        = list(string)
-  description = "Address prefix for your default subnet. Defaults to 10.0.0.0/24."
-  default     = ["10.0.0.0/24"]
-}
-
-variable "default_subnet_name" {
-  type        = string
-  description = "Default subnet name."
-  default     = "default"
-}
-
-variable "additional_subnets" {
+variable "subnets" {
   type = map(object({ address_prefixes = list(string), name = string, resource_group_name = string, virtual_network_name = string }))
   default = {
+    default = {
+      address_prefixes     = ["10.0.0.0/24"]
+      name                 = "default"
+      resource_group_name  = "dojolab-defaultname"
+      virtual_network_name = "dojolab-defaultname-vnet"
+    },
     ApplicationGatewaySubnet = {
       address_prefixes     = ["10.0.1.0/24"]
       name                 = "ApplicationGatewaySubnet"
@@ -139,12 +133,12 @@ variable "sql_database_name" {
 
 variable "sql_login_username" {
   type        = string
-  description = "Username of your SQL AzureAD administrator. Mandatory variable. Must be a full UPN."
-  default     = "sqladmin@domain.local"
+  description = "Username of your SQL AzureAD administrator. Must be a full UPN."
+  default     = "dojosqladmin@2SGo2Cloud.onmicrosoft.com"
 }
 
 variable "sql_login_object_id" {
   type        = string
-  description = "Object ID of your AzureAD administrator. Mandatory variable. It is the object id found in Azure AD on the user object."
-  default     = "40e4abd8-bcf1-4d98-9906-5d9b07523b24"
+  description = "Object ID of your AzureAD administrator. It is the object id found in Azure AD on the user object."
+  default     = "861b634d-94e1-4018-8190-6f863d781425"
 }

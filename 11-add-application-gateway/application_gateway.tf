@@ -29,7 +29,7 @@ resource "azurerm_application_gateway" "appgateway" {
 
   gateway_ip_configuration {
     name      = "my-gateway-ip-configuration"
-    subnet_id = azurerm_subnet.additional_subnets["ApplicationGatewaySubnet"].id
+    subnet_id = azurerm_subnet.subnets["ApplicationGatewaySubnet"].id
   }
 
   frontend_port {
