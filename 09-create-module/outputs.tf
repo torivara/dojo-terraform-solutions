@@ -3,7 +3,7 @@ output "resource_group_name" {
 }
 
 output "location" {
-  value = location
+  value = var.location
 }
 
 output "vnet_name" {
@@ -22,10 +22,10 @@ output "subnets" {
   value = azurerm_virtual_network.vnet.subnet[*]
 }
 
-output "nsg_name" {
-  value = azurerm_network_security_group.nsg.name
+output "nsg_id" {
+  value = module.nsg.nsg_id
 }
 
 output "nsg_rules" {
-  value = azurerm_network_security_rule.nsg_rules[*]
+  value = module.nsg.nsg_rules
 }

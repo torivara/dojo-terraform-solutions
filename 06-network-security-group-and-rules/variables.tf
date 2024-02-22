@@ -46,6 +46,14 @@ variable "default_subnet_name" {
 
 variable "additional_subnets" {
   type = map(object({ address_prefixes = list(string), name = string, resource_group_name = string, virtual_network_name = string }))
+  default = {
+    ApplicationGatewaySubnet = {
+      address_prefixes     = ["10.0.1.0/24"]
+      name                 = "ApplicationGatewaySubnet"
+      resource_group_name  = "dojolab-defaultname"
+      virtual_network_name = "dojolab-defaultname-vnet"
+    }
+  }
 }
 
 variable "nsg_name" {
@@ -84,7 +92,7 @@ variable "nsg_security_rules" {
       direction                  = "Inbound"
       name                       = "AllowInboundRdp"
       priority                   = 120
-      protocol                   = "Any"
+      protocol                   = "*"
       source_port_range          = "*"
       destination_port_range     = "3389"
       source_address_prefix      = "*"

@@ -17,7 +17,7 @@ resource "azurerm_network_security_rule" "nsg_rules" {
   network_security_group_name                = azurerm_network_security_group.nsg.name
   priority                                   = each.value.priority
   protocol                                   = lookup(each.value, "protocol", "*")
-  resource_group_name                        = data.azurerm_resource_group.nsg.name
+  resource_group_name                        = data.azurerm_resource_group.rg.name
   description                                = lookup(each.value, "description", "Security rule for ${lookup(each.value, "name", "default_rule_name")}")
   destination_address_prefix                 = lookup(each.value, "destination_application_security_group_ids", null) == null && lookup(each.value, "destination_address_prefixes", null) == null ? lookup(each.value, "destination_address_prefix", "*") : null
   destination_address_prefixes               = lookup(each.value, "destination_application_security_group_ids", null) == null ? lookup(each.value, "destination_address_prefixes", null) : null

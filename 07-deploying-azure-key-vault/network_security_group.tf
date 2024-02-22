@@ -20,7 +20,7 @@ resource "azurerm_network_security_rule" "nsg_rules" {
 }
 
 resource "azurerm_subnet_network_security_group_association" "nsg_association" {
-  for_each                  = toset(azurerm_virtual_network.vnet.subnet[*])
+  for_each                  = var.additional_subnets
   network_security_group_id = azurerm_network_security_group.nsg.id
-  subnet_id                 = each.value.id
+  subnet_id                 = "${azurerm_virtual_network.vnet.id}/subnets/${each.value.name}"
 }

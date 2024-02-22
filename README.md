@@ -15,7 +15,7 @@ These are the exercises we will try to get through during our dojo coding sessio
 
 You can find solutions [here](https://www.google.com).
 
-### Exercise 1: Setting Up Your Environment
+### Exercise 1: Setting Up Your Environment (local state)
 
 **Objective**: Install prerequisites and configure it to use the AzureRM provider.
 
@@ -25,49 +25,53 @@ You can find solutions [here](https://www.google.com).
 3. Install Hashicorp Terraform extension in VSCode.
 4. Configure your Terraform and provider version constraints with a `version.tf` file.
 5. Configure Terraform to use the [AzureRM provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) by creating a `provider.tf` file.
-6. Configure your [AzureRM remote backend](https://developer.hashicorp.com/terraform/language/settings/backends/azurerm) with information provided.
 7. Initialize your Terraform configuration.
 
-**Hint**: Use the Terraform documentation to find the syntax for declaring providers and initializing configurations.
-**Hint**: Use winget (or another package manager) to install Terraform and Azure CLI. This simplifies future software updates.
+- **Hint**: Use the Terraform documentation to find the syntax for declaring providers and initializing configurations.
+- **Hint**: Use winget (or another package manager) to install Terraform and Azure CLI. This simplifies future software updates.
 
-### Exercise 2: Defining Variables, Locals, and Outputs
+### Exercise 2: Defining Variables, Locals, and Outputs (local state)
 
 **Objective**: Learn to declare variables, locals, and outputs.
 
 **Tasks**:
-1. Create a `variables.tf` file to declare a variable for an Azure resource group name.
+1. Create a `variables.tf` file to declare variables.
 2. Define a variable called prefix in your `variables.tf` file.
-3. Define a local variable in `locals.tf` to concatenate the prefix with the resource group name.
-4. Create an output in `outputs.tf` to display the full resource group name.
-5. Run terraform plan to see changes.
-6. Run terraform apply to output values.
+3. Define a variable called resource_group_name in your variables.tf file.
+4. Define a local variable in `locals.tf` to concatenate the prefix with the resource group name.
+5. Create an output in `outputs.tf` to display the full resource group name.
+6. Run terraform plan to see changes.
+7. Run terraform apply to output values.
 
-**Hint**: Explore Terraform documentation on variables, locals, and outputs.
+- **Hint**: Explore Terraform documentation on variables, locals, and outputs.
 
-### Exercise 3: Creating a Resource Group
+### Exercise 3: Creating a Resource Group and a virtual network (local state)
 
-**Objective**: Use Terraform to create an [Azure Resource Group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group).
+**Objective**: Use Terraform to create an [Azure Resource Group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group), and create a [Virtual Network](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) within the Resource Group.
 
 **Tasks**:
 1. Using the variable and local from Exercise 2, define a resource in `main.tf` to create an Azure Resource Group.
 2. Add another variable in `variables.tf` called location. You can add a sensible default value if you want.
 3. Validate the location variable to allow only locations: "norwayeast", "norwaywest", "westeurope", "northeurope"
-4. Plan and apply your configuration to create the resource group in Azure.
+4. Add new variables for the Virtual Network settings (address space, location, default subnet).
+5. Define a resource in your Terraform configuration to create a Virtual Network in the previously created Resource Group.
+6. Plan and apply your configuration to create the resource group in Azure.
 
-**Hint**: Refer to the AzureRM provider documentation for the syntax to create a resource group.
-**Hint**: Terraform validation for variables documentation [here](https://developer.hashicorp.com/terraform/language/values/variables#custom-validation-rules)
+- **Hint**: Refer to the AzureRM provider documentation for the syntax to create a resource group.
+- **Hint**: Terraform validation for variables documentation [here](https://developer.hashicorp.com/terraform/language/values/variables#custom-validation-rules)
+- **Hint**: Look into the AzureRM Virtual Network resource documentation.
 
-### Exercise 4: Adding a Virtual Network
+### Exercise 4: Moving the state
 
-**Objective**: Define and create a [Virtual Network](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) within the Resource Group.
+**Objective**: Move the state from locally on your client to remotely on Azure Storage Account
 
 **Tasks**:
-1. Add new variables for the Virtual Network settings (address space, location, default subnet).
-2. Define a resource in your Terraform configuration to create a Virtual Network in the previously created Resource Group.
-3. Apply your configuration.
+1. Configure your [AzureRM remote backend](https://developer.hashicorp.com/terraform/language/settings/backends/azurerm) with information provided.
+2. Try to plan and apply configuration. What happens?
+3. Fix the issues.
+4. Apply your configuration with the new remote state.
 
-**Hint**: Look into the AzureRM Virtual Network resource documentation.
+- **Hint**: Look into [terraform init -migrate-state](https://developer.hashicorp.com/terraform/cli/commands/init#backend-initialization).
 
 ### Exercise 5: Subnets Creation
 
@@ -78,27 +82,13 @@ You can find solutions [here](https://www.google.com).
 2. Reference the virtual network with a property lookup and not a hardcoded vnet name.
 3. Update your Terraform configuration to include subnets in your Virtual Network.
 4. Apply your changes to Azure.
+5. Remove a subnet from your config. What happens when you plan and apply?
 
-**Hint**: Each subnet will be a separate resource linked to your Virtual Network.
-**Hint**: Explore [for_each](https://developer.hashicorp.com/terraform/language/meta-arguments/for_each) to create more subnets without repeating your code.
-**Alternative solution**: Try creating the same subnets inside the virtual network resource. Is this easier? Harder? Same?
+- **Hint**: Each subnet will be a separate resource linked to your Virtual Network.
+- **Hint**: Explore [for_each](https://developer.hashicorp.com/terraform/language/meta-arguments/for_each) to create more subnets without repeating your code.
+- **Alternative solution**: Try creating the same subnets inside the virtual network resource with a dynamic block. Is this easier? Harder? Same?
 
-### Exercise 6: Network Security Group and Rules
-
-**Objective**: Implement a [Network Security Group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_group) (NSG) with security rules.
-
-**Tasks**:
-1. Define a NSG resource with security rules in Terraform.
-2. The NSG should allow HTTPS, SSH and RDP from your client ip to the entire subnet range.
-3. Define the [NSG rules](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule) with a map of objects.
-4. Associate the NSG with one or more subnets from Exercise 5.
-5. Apply your configuration.
-
-**Hint**: Security rules should not be defined within the NSG resource block. Use the NSG rule resource with for_each.
-**Hint**: Use [dynamic blocks](https://developer.hashicorp.com/terraform/language/expressions/dynamic-blocks) for your NSG rules.
-**Hint**: Get your public ip `curl api.ipify.org` or `(invoke-webrequest api.ipify.org).content`
-
-### Exercise 7: Deploying an Azure Key Vault
+### Exercise 6: Deploying an Azure Key Vault
 
 **Objective**: Deploy an [Azure Key Vault](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault) for secret storage. You should always store secrets in a secure vault.
 
@@ -108,10 +98,10 @@ You can find solutions [here](https://www.google.com).
 3. Add role assignment for terraform user.
 4. Enable retrieval of secrets on VM deployment.
 
-**Hint**: Avoid purge protection as this can prevent removal of key vault.
-**Hint**: Remember [role assignment](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) for your Terraform user. [Key Vault Reader](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-reader) combined with [Key Vault Secrets User](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-secrets-user) should be sufficient (least privilege), but you can also use [Key Vault Administrator](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-administrator) in this fictional setting.
+- **Hint**: Avoid purge protection as this can prevent removal of key vault.
+- **Hint**: Remember [role assignment](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) for your Terraform user. [Key Vault Reader](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-reader) combined with [Key Vault Secrets User](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-secrets-user) should be sufficient (least privilege), but you can also use [Key Vault Administrator](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-administrator) in this fictional setting.
 
-### Exercise 8: Deploying an Azure VM
+### Exercise 7: Deploying an Azure VM
 
 **Objective**: Deploy an Azure Virtual Machine (with public IP address).
 
@@ -123,10 +113,36 @@ You can find solutions [here](https://www.google.com).
 5. Define a resource for an Azure VM, placing it within your subnet. Public IP required for external access.
 6. Apply your Terraform configuration to deploy the VM.
 
-**Hint**: Avoid the deprecated azurerm_virtual_machine resource. Use [linux](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine) or [windows](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/windows_virtual_machine).
+- **Hint**: Avoid the deprecated azurerm_virtual_machine resource. Use [linux](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine) or [windows](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/windows_virtual_machine).
 
+### Exercise 8: Implementing Azure SQL Database
 
-### Exercise 9: Create a module
+**Objective**: Create an [Azure SQL Database](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/mssql_database) instance.
+
+**Tasks**:
+1. Declare variables for the SQL Database configuration (server name, database name, etc.).
+2. Define resources for an Azure SQL Server and a SQL Database.
+3. Apply your Terraform configuration to create the SQL Database.
+
+- **Hint**: The database requires an SQL server to be defined first.
+- **Hint**: Use a small SKU, preferrably S0 or S1.
+
+### Exercise 9: Network Security Group and Rules
+
+**Objective**: Implement a [Network Security Group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_group) (NSG) with security rules.
+
+**Tasks**:
+1. Define a NSG resource with security rules in Terraform.
+2. The NSG should allow HTTPS, SSH and RDP from your client ip to the entire subnet range.
+3. Define the [NSG rules](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule) with a map of objects.
+4. Associate the NSG with one or more subnets from Exercise 5.
+5. Apply your configuration.
+
+- **Hint**: Security rules should not be defined within the NSG resource block. Use the NSG rule resource with for_each.
+- **Hint**: Use [dynamic blocks](https://developer.hashicorp.com/terraform/language/expressions/dynamic-blocks) for your NSG rules.
+- **Hint**: Get your public ip `curl api.ipify.org` or `(invoke-webrequest api.ipify.org).content`
+
+### Exercise 10: Create a module
 
 **Objective**: Create a module out of one of the previous resources you made.
 
@@ -136,21 +152,9 @@ You can find solutions [here](https://www.google.com).
 3. Define a resource with your module.
 4. Apply your Terraform configuration to create the resource(s).
 
-**Hint**: Think about flexibility and reuse when creating modules.
-**Hint**: Define smart defaults to allow minimal variable input when using module.
-**Hint**: [Conditional expressions](https://developer.hashicorp.com/terraform/language/expressions/conditionals) allows you to handle input missing from module calls.
-
-### Exercise 10: Implementing Azure SQL Database
-
-**Objective**: Create an [Azure SQL Database](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/mssql_database) instance.
-
-**Tasks**:
-1. Declare variables for the SQL Database configuration (server name, database name, etc.).
-2. Define resources for an Azure SQL Server and a SQL Database.
-3. Apply your Terraform configuration to create the SQL Database.
-
-**Hint**: The database requires an SQL server to be defined first.
-**Hint**: Use a small SKU, preferrably S0 or S1.
+- **Hint**: Think about flexibility and reuse when creating modules.
+- **Hint**: Define smart defaults to allow minimal variable input when using module.
+- **Hint**: [Conditional expressions](https://developer.hashicorp.com/terraform/language/expressions/conditionals) allows you to handle input missing from module calls.
 
 ### Exercise 11: Adding Application Gateway
 
@@ -161,4 +165,4 @@ You can find solutions [here](https://www.google.com).
 2. Create an Application Gateway resource in Terraform, configuring backend pools, listeners, and rules.
 3. Apply your configuration to establish the Application Gateway.
 
-**Hint**: Use the AzureRM documentation for Application Gateway to understand the required components and dependencies.
+- **Hint**: Use the AzureRM documentation for Application Gateway to understand the required components and dependencies.
